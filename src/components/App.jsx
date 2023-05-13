@@ -11,14 +11,35 @@ import Modal from "./Modal";
 
 export class App extends Component  {
 state = {
-  query: ''
+  query: '',
+  page: 1,
+  images: []
 }
 
-componentDidUpdate () {
-  searchImages(this.state.query, 1)
-    .then(data => console.log(data))
+// id
+// webformatURL 
+// largeImageURL
+
+componentDidUpdate (prevProps, prevState) {
+  const { query } = this.state;
+
+  if (prevState.query !== query) {
+    searchImages(query, 1)
+    .then(({hits}) => {
+      console.log(hits)
+      const images = hits.map(({id, webformatURL, largeImageURL}) => {return {id, webformatURL, largeImageURL}})
+      
+      this.setState({images})
+      
+  })
     .catch(error => console.log(error))
+  }
 }
+
+// pageIncrement () {
+//   this.setState(prevState => {page: prevState.page += 1});
+//   console.log(this.state)
+// }
   
   handleSubmit = (e) => {
     const query = e.target.elements.searchFormInput.value;
@@ -27,7 +48,6 @@ componentDidUpdate () {
     this.setState({query});
     
     e.target.reset()
-
   }
 
   render () {
@@ -36,7 +56,7 @@ componentDidUpdate () {
     return (
       <>
       <Searchbar handleSubmit={this.handleSubmit}/>
-      <ImageGallery />
+      <ImageGallery images={this.state.images} alt={this.state.query}/>
       {/* <Loader /> */}
       <Button />
       {/* <Modal /> */}
