@@ -7,7 +7,6 @@ const per_page = '12';
 export default function searchImages (query, page) {
     return fetch(`${BASE_URL}/?key=${KEY}&q=${query}&image_type=${image_type}&orientation=${orientation}&page=${page}&per_page=${per_page}`)
     .then(res => {
-        console.log(res)
         if(!res.ok) {
             throw new Error('Oops, something went wrong =(')
         }

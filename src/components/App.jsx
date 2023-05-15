@@ -31,6 +31,8 @@ export class App extends Component  {
   componentDidUpdate (_, prevState) {
     const { query, page } = this.state;
 
+    console.log(this.state)
+
     if (prevState.query !== query || (prevState.query === query && prevState.page !== page)) {
       this.fetchImages();
     }
