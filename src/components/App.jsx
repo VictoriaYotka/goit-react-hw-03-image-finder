@@ -13,52 +13,74 @@ export class App extends Component  {
 state = {
   query: '',
   page: 1,
-  images: []
+  images: [],
+  isLoading: false,
+  loadMore: false,
 }
 
-// id
-// webformatURL 
-// largeImageURL
+componentDidUpdate (_, prevState) {
+  console.log(this.state);  
 
-componentDidUpdate (prevProps, prevState) {
-  const { query } = this.state;
+  const { query, page } = this.state;
 
-  if (prevState.query !== query) {
-    searchImages(query, 1)
-    .then(({hits}) => {
-      console.log(hits)
-      const images = hits.map(({id, webformatURL, largeImageURL}) => {return {id, webformatURL, largeImageURL}})
-      
-      this.setState({images})
-      
-  })
-    .catch(error => console.log(error))
+  if (prevState.query !== query || (prevState.query === query && prevState.page !== page)) {
+    this.fetchImages();
   }
 }
 
-// pageIncrement () {
-//   this.setState(prevState => {page: prevState.page += 1});
-//   console.log(this.state)
-// }
+fetchImages = () => {
+  const { query, page, images } = this.state;
+  this.setState({isLoading: true})
+  
+
+  searchImages(query, page)
+    .then(res => {
+      const {hits} = res;
+      const newImages = hits.map(({id, webformatURL, largeImageURL}) => {return {id, webformatURL, largeImageURL}})
+  
+      this.setState(prevState => 
+        ({images: [...prevState.images, ...newImages]}))
+      // console.log(images.length + newImages.length)
+      // console.log(res.totalHits)
+      if((images.length + newImages.length) < res.totalHits) {
+        this.setState({loadMore: true})
+      } else {
+        this.setState({loadMore: false})
+      }
+
+
+      
+  })
+    .catch(error => console.log(error))
+    .finally(() => this.setState({isLoading: false}))
+  }
   
   handleSubmit = (e) => {
     const query = e.target.elements.searchFormInput.value;
     e.preventDefault();
 
-    this.setState({query});
+    this.setState({query, page: 1, images: []});
     
     e.target.reset()
   }
 
-  render () {
+  handleLoadMore = () => {
+    console.log('load more')
+    this.setState(prevState => ({page: prevState.page += 1})); 
+  }
 
-    
+  render () {
+    const {isLoading, loadMore} = this.state;
     return (
       <>
       <Searchbar handleSubmit={this.handleSubmit}/>
+      
       <ImageGallery images={this.state.images} alt={this.state.query}/>
-      {/* <Loader /> */}
-      <Button />
+      
+      {isLoading && <Loader />}
+      
+      {loadMore && <Button handleLoadMore={this.handleLoadMore}/>}
+      
       {/* <Modal /> */}
       </>
       

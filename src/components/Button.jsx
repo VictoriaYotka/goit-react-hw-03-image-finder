@@ -1,5 +1,5 @@
-export default function Button () {
+export default function Button ({handleLoadMore}) {
     return (
-        <button type="button" className="button">Load more</button>
+        <button onClick={handleLoadMore} type="button" className="button">Load more</button>
     )
 }
