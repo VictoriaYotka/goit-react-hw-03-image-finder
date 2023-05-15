@@ -3,6 +3,7 @@ import searchImages from "services";
 
 import Searchbar from "./Searchbar";
 import ImageGallery from "./ImageGallery";
+import ImageGalleryItem from "./ImageGalleryItem";
 import Loader from './Loader'
 import Button from "./Button";
 import Modal from "./Modal";
@@ -10,49 +11,50 @@ import Modal from "./Modal";
 
 
 export class App extends Component  {
-state = {
-  query: '',
-  page: 1,
-  images: [],
-  isLoading: false,
-  loadMore: false,
-}
-
-componentDidUpdate (_, prevState) {
-  console.log(this.state);  
-
-  const { query, page } = this.state;
-
-  if (prevState.query !== query || (prevState.query === query && prevState.page !== page)) {
-    this.fetchImages();
+  state = {
+    query: '',
+    page: 1,
+    images: [],
+    isLoading: false,
+    loadMore: false,
+    isModalOpen: false,
   }
-}
 
-fetchImages = () => {
-  const { query, page, images } = this.state;
-  this.setState({isLoading: true})
-  
+  componentDidUpdate (_, prevState) {
+    console.log(this.state);  
 
-  searchImages(query, page)
-    .then(res => {
-      const {hits} = res;
-      const newImages = hits.map(({id, webformatURL, largeImageURL}) => {return {id, webformatURL, largeImageURL}})
-  
-      this.setState(prevState => 
-        ({images: [...prevState.images, ...newImages]}))
-      // console.log(images.length + newImages.length)
-      // console.log(res.totalHits)
-      if((images.length + newImages.length) < res.totalHits) {
-        this.setState({loadMore: true})
-      } else {
-        this.setState({loadMore: false})
-      }
+    const { query, page } = this.state;
+
+    if (prevState.query !== query || (prevState.query === query && prevState.page !== page)) {
+      this.fetchImages();
+    }
+  }
+
+  fetchImages = () => {
+    const { query, page, images } = this.state;
+    this.setState({isLoading: true})
+    
+
+    searchImages(query, page)
+      .then(res => {
+        const {hits} = res;
+        const newImages = hits.map(({id, webformatURL, largeImageURL}) => {return {id, webformatURL, largeImageURL}})
+    
+        this.setState(prevState => 
+          ({images: [...prevState.images, ...newImages]}))
+        // console.log(images.length + newImages.length)
+        // console.log(res.totalHits)
+        if((images.length + newImages.length) < res.totalHits) {
+          this.setState({loadMore: true})
+        } else {
+          this.setState({loadMore: false})
+        }
 
 
-      
-  })
-    .catch(error => console.log(error))
-    .finally(() => this.setState({isLoading: false}))
+        
+    })
+      .catch(error => console.log(error))
+      .finally(() => this.setState({isLoading: false}))
   }
   
   handleSubmit = (e) => {
@@ -69,19 +71,37 @@ fetchImages = () => {
     this.setState(prevState => ({page: prevState.page += 1})); 
   }
 
+  handleImageClick = () => {
+    this.setState({isModalOpen: true});
+    console.log('image click')
+  }
+
+  // windows.addEventListener ()
+
+  // handleImageClick = (e) => {
+  //   console.dir(e.target)
+  // }
+
   render () {
-    const {isLoading, loadMore} = this.state;
+    const {query, images, isLoading, loadMore, isModalOpen} = this.state;
     return (
       <>
       <Searchbar handleSubmit={this.handleSubmit}/>
       
-      <ImageGallery images={this.state.images} alt={this.state.query}/>
+      <ImageGallery>
+        {images.map(({id, webformatURL}) => 
+          <ImageGalleryItem onClick={this.handleImageClick} key={id} webformatURL={webformatURL} alt={query}/>
+          )}
+      </ImageGallery>
+
       
       {isLoading && <Loader />}
       
       {loadMore && <Button handleLoadMore={this.handleLoadMore}/>}
       
-      {/* <Modal /> */}
+      {isModalOpen &&  
+      <Modal alt={query}/>}
+     
       </>
       
     )

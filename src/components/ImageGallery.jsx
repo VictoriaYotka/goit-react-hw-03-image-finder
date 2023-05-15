@@ -1,12 +1,7 @@
-import ImageGalleryItem from "./ImageGalleryItem"
-
-
-export default function ImageGallery ({images, alt}) {
+export default function ImageGallery ({children}) {
     return (
-        <ul className="imageGallery">
-            { images.map(({id, webformatURL}) => <ImageGalleryItem key={id} webformatURL={webformatURL} alt={alt}/>) }
-
-
-</ul>
+        <>
+        <ul className="imageGallery">{children}</ul>
+        </>
     )
 }
