@@ -15,14 +15,13 @@ export class App extends Component  {
     query: '',
     page: 1,
     images: [],
+    largeImage:'',
     isLoading: false,
     loadMore: false,
     isModalOpen: false,
   }
 
   componentDidUpdate (_, prevState) {
-    console.log(this.state);  
-
     const { query, page } = this.state;
 
     if (prevState.query !== query || (prevState.query === query && prevState.page !== page)) {
@@ -42,8 +41,7 @@ export class App extends Component  {
     
         this.setState(prevState => 
           ({images: [...prevState.images, ...newImages]}))
-        // console.log(images.length + newImages.length)
-        // console.log(res.totalHits)
+
         if((images.length + newImages.length) < res.totalHits) {
           this.setState({loadMore: true})
         } else {
@@ -67,44 +65,41 @@ export class App extends Component  {
   }
 
   handleLoadMore = () => {
-    console.log('load more')
     this.setState(prevState => ({page: prevState.page += 1})); 
   }
 
-  handleImageClick = () => {
-    this.setState({isModalOpen: true});
-    console.log('image click')
+  openModal = (key) => {
+    const largeImage = this.state.images.find(image => image.id === key).largeImageURL;
+
+    this.setState({isModalOpen: true, largeImage});
   }
 
-  // windows.addEventListener ()
-
-  // handleImageClick = (e) => {
-  //   console.dir(e.target)
-  // }
+  closeModal = (e) => {
+    if(e.key === 'Escape' || e.currentTarget === e.target) {
+      this.setState({isModalOpen: false});
+    }  
+  }
 
   render () {
-    const {query, images, isLoading, loadMore, isModalOpen} = this.state;
+    const {query, images, largeImage, isLoading, loadMore, isModalOpen} = this.state;
+    
     return (
       <>
       <Searchbar handleSubmit={this.handleSubmit}/>
       
       <ImageGallery>
         {images.map(({id, webformatURL}) => 
-          <ImageGalleryItem onClick={this.handleImageClick} key={id} webformatURL={webformatURL} alt={query}/>
+          <ImageGalleryItem handleImageClick={()=>this.openModal(id)} key={id} webformatURL={webformatURL} alt={query}/>
           )}
       </ImageGallery>
-
       
       {isLoading && <Loader />}
       
       {loadMore && <Button handleLoadMore={this.handleLoadMore}/>}
       
       {isModalOpen &&  
-      <Modal alt={query}/>}
-     
+      <Modal src={largeImage} alt={query} closeModal={this.closeModal}/>}
       </>
-      
     )
   }
-  
 };
