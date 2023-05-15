@@ -34,6 +34,7 @@ export class App extends Component  {
     console.log(this.state)
 
     if (prevState.query !== query || (prevState.query === query && prevState.page !== page)) {
+      console.log(prevState.query !== query || (prevState.query === query && prevState.page !== page))
       this.fetchImages();
     }
   }
