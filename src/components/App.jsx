@@ -1,6 +1,6 @@
 import { Component } from "react";
+import { Report } from 'notiflix/build/notiflix-report-aio';
 import searchImages from "services";
-
 import Searchbar from "./Searchbar";
 import ImageGallery from "./ImageGallery";
 import ImageGalleryItem from "./ImageGalleryItem";
@@ -8,7 +8,14 @@ import Loader from './Loader'
 import Button from "./Button";
 import Modal from "./Modal";
 
-
+Report.init({
+  backOverlayClickToClose: true,
+  info: {
+    svgColor: '#303f9f',
+    buttonBackground: '#303f9f',
+    backOverlayColor: 'rgba(255,255,255,0.2)',
+  },
+});
 
 export class App extends Component  {
   state = {
@@ -33,10 +40,15 @@ export class App extends Component  {
     const { query, page, images } = this.state;
     this.setState({isLoading: true})
     
-
     searchImages(query, page)
       .then(res => {
         const {hits} = res;
+        
+        if(page === 1 && hits.length === 0) {
+          this.setState({isLoading: false, loadMore: false});
+          Report.info("Oops,we've found no images :(", " ", 'Try another search query');
+          return 
+        }
         const newImages = hits.map(({id, webformatURL, largeImageURL}) => {return {id, webformatURL, largeImageURL}})
     
         this.setState(prevState => 
@@ -48,7 +60,7 @@ export class App extends Component  {
           this.setState({loadMore: false})
         }   
     })
-      .catch(error => console.log(error))
+      .catch(error => Report.info('Oops, something went wrong =(', ' ', 'Try again!'))
       .finally(() => this.setState({isLoading: false}))
   }
   

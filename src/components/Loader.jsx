@@ -6,7 +6,7 @@ import { ThreeDots } from  'react-loader-spinner'
             height="80" 
             width="80" 
             radius="9"
-            color="#4fa94d" 
+            color="#303f9f" 
             ariaLabel="three-dots-loading"
             wrapperStyle={{marginRight: 'auto', marginLeft: 'auto', display: 'block'}}
             wrapperClassName=""
