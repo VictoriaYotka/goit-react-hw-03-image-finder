@@ -32,13 +32,11 @@ export class App extends Component  {
     const { query, page } = this.state;
 
     console.log(this.state)
-    console.log('prevState.query !== query:');
-    console.log(prevState.query !== query);
-    console.log('prevState.query === query && prevState.page !== page:')
-    console.log(prevState.query === query && prevState.page !== page)
+    console.log(`prevState.query !== query: ${prevState.query !== query}`);
+    console.log(`prevState.page !== page: ${prevState.page !== page}`)
+    console.log(`prevState.query === query && prevState.page !== page: ${prevState.query === query && prevState.page !== page}`)
 
     if (prevState.query !== query || (prevState.query === query && prevState.page !== page)) {
-      console.log(prevState.query !== query || (prevState.query === query && prevState.page !== page))
       this.fetchImages();
     }
   }
