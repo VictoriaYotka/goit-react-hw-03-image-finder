@@ -1,12 +1,12 @@
 import { Component } from "react";
 import { Report } from 'notiflix/build/notiflix-report-aio';
 import searchImages from "services";
-import Searchbar from "./Searchbar";
-import ImageGallery from "./ImageGallery";
-import ImageGalleryItem from "./ImageGalleryItem";
-import Loader from './Loader'
-import Button from "./Button";
-import Modal from "./Modal";
+import Searchbar from "./Searchbar/Searchbar";
+import ImageGallery from "./ImageGallery/ImageGallery";
+import ImageGalleryItem from "./ImageGalleryItem/ImageGalleryItem";
+import Loader from './Loader/Loader'
+import Button from "./Button/Button";
+import Modal from "./Modal/Modal";
 
 Report.init({
   backOverlayClickToClose: true,

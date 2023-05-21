@@ -1,4 +1,5 @@
 import { Component } from "react"
+import { Overlay, ModalDiv } from "./Modal.styled"
 
 export default class Modal extends Component {
 
@@ -14,11 +15,11 @@ export default class Modal extends Component {
     const { closeModal, src, alt } = this.props
 
     return (
-      <div className="overlay" onClick={closeModal}>
-      <div className="modal">
+      <Overlay  onClick={closeModal}>
+      <ModalDiv >
         <img src={src} alt={alt} />
-      </div>
-    </div>
+      </ModalDiv>
+    </Overlay>
   )
   }
 }
