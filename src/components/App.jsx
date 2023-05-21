@@ -65,10 +65,17 @@ export class App extends Component  {
   }
   
   handleSubmit = (e) => {
-    const query = e.target.elements.searchFormInput.value;
+    const { query } = this.state;
+    const NewQuery = e.target.elements.searchFormInput.value;
+
     e.preventDefault();
 
-    this.setState({query, page: 1, images: []});
+    if(query !== NewQuery) {
+      this.setState({query: NewQuery, page: 1, images: []});
+    } else {
+      Report.info("you are already viewing images ", "for this request", 'Return');
+
+    }
     
     e.target.reset()
   }
